@@ -21,11 +21,21 @@ jobs:
         run: aws eks --region ${{ secrets.AWS_DEFAULT_REGION }} update-kubeconfig --name ${{ secrets.CLUSTER_NAME }}
       - name: get all nodes
         run: kubectl get nodes
+      - name: create release or upgrade
+        run: helm upgrade --install app bookdiscovery-helm/
+      - name: helm list
+        run: helm list
+      - name: get all
+        run: kubectl get all
+      - name: get ingress
+        run: kubectl get ingress
+      
+      
       
 
       
       
       
-        
+
 
     
