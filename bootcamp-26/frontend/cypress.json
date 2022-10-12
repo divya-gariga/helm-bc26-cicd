@@ -1,0 +1,6 @@
+{
+  "baseUrl": "http://fe.nip.io",
+  "viewportWidth": 1300,
+  "viewportHeight": 800,
+  "experimentalStudio": true
+}

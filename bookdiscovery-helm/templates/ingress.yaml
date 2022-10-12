@@ -3,11 +3,12 @@ kind: Ingress
 metadata:
   name: {{ .Release.Name }}-book-discovery-app-ingress
   namespace: {{ $.Values.namespace }}
-  annotations:
+  annotations: 
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  ingressClassName: nginx
   rules:
-    - host: fe.nip.io
+    - host: bootcamp26.tk
       http:
         paths:
           - path: /
@@ -17,7 +18,7 @@ spec:
                 name: {{ .Release.Name }}-bc26-frontend-service
                 port:
                   number: 3000
-    - host: be.nip.io
+    - host: backend.bootcamp26.tk
       http:
         paths:
           - path: /
