@@ -21,6 +21,10 @@ jobs:
         run: aws eks --region ${{ secrets.AWS_DEFAULT_REGION }} update-kubeconfig --name ${{ secrets.CLUSTER_NAME }}
       - name: get all nodes
         run: kubectl get nodes
+      - name: switch to namespace
+        run: kubectl config set-context --current --namespace=bc26-app
+      - name: create secret 
+        run: kubectl create secret docker-registry regcred --docker-server=ghcr.io --docker-username=${{ .secrets.REGISTRY_TOKEN }} --docker-password=${{ .secrets.REGISTRY_TOKEN }}
       - name: create release or upgrade
         run: helm upgrade --install app bookdiscovery-helm/
       - name: helm list
@@ -29,6 +33,7 @@ jobs:
         run: kubectl get all
       - name: get ingress
         run: kubectl get ingress
+      
       
       
       
