@@ -17,6 +17,12 @@ jobs:
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
       - name: check aws version
         run:  aws --version
+      - name: connect to eks cluster
+        run: aws eks --region ${{ secrets.AWS_DEFAULT_REGION }} update-kubeconfig --name ${{ secrets.CLUSTER_NAME }}
+      
+
+      
+      
       
         
 
