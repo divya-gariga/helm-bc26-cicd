@@ -1,0 +1,23 @@
+name: bootcamp deployment 
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: clone repo
+        uses: actions/checkout@v2
+      - name: install aws cli
+        run: curl "https://s3.amazonaws.com/aws-cli/awscli-bundle-1.16.312.zip" -o "awscli-bundle.zip" unzip awscli-bundle.zip sudo ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
+      - name: aws login
+        run: aws configure set aws_access_key ${{ secrets.AWS_ACCESS_KEY_ID }}
+        run: aws configure set aws_secret_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: aws configure set region ${{ secrets.AWS_DEFAULT_REGION }}     
+      - name: check aws version
+        run:  aws --version
+      
+        
+
+    
