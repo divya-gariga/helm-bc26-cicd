@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: build mysql
-        working-directory: ./bootcamp-26/database
+        working-directory: bootcamp-26/database
         run: docker build . -t ${{ secrets.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/bootcamp-26-db:latest
       - name: push mysql
         run: docker push ${{ secrets.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/bootcamp-26-db:latest
@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: build frontend
-        working-directory: ./bootcamp-26/frontend
+        working-directory: bootcamp-26/frontend
         run: docker build . -t ${{ secrets.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/bootcamp-26-frontend:latest
       - name: docker push frontend
         run: docker push ${{ secrets.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/bootcamp-26-frontend:latest
