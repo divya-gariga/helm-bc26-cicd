@@ -5,9 +5,9 @@ on:
       - main
 jobs:
   build:
-    defaults:
-      run:
-        working-directory: ./bootcamp-26
+    # defaults:
+    #   run:
+    #     working-directory: ./bootcamp-26
     runs-on: ubuntu-latest
     steps:
       - name: clone repo
@@ -22,19 +22,19 @@ jobs:
 
 
       - name: maven install
-        working-directory: ./backend
+        working-directory: ./bootcamp-26/backend
         run: mvn clean install -DskipTests
 
       - name: build mysql
-        working-directory: ./database
+        working-directory: ./bootcamp-26/database
         run: docker build . -t ${{ secrets.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/bootcamp-26-db:latest
 
       - name: build backend
-        working-directory: ./backend
+        working-directory: ./bootcamp-26/backend
         run: docker build . -t ${{ secrets.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/bootcamp-26-backend:latest
 
       - name: build frontend
-        working-directory: ./frontend
+        working-directory: ./bootcamp-26/frontend
         run: docker build . -t ${{ secrets.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/bootcamp-26-frontend:latest
 
       - name: docker push mysql
@@ -47,9 +47,9 @@ jobs:
         uses: actions/checkout@v2
   deploy:
     needs: build
-    defaults:
-      run:
-        working-directory: ./bookdiscovery-helm
+    # defaults:
+    #   run:
+    #     working-directory: ./bookdiscovery-helm
     runs-on: ubuntu-latest
     steps:
       - name: Configure AWS credentials
@@ -61,6 +61,6 @@ jobs:
       - name: connect to eks cluster
         run: aws eks --region ${{ secrets.AWS_DEFAULT_REGION }} update-kubeconfig --name ${{ secrets.CLUSTER_NAME }}
       - name: create release or upgrade
-        run: kubectl config set-context --current --namespace=bc26-app && helm upgrade --install app .
+        run: kubectl config set-context --current --namespace=bc26-app && helm upgrade --install app ./bookdiscovery-helm
       - name: verify installation
         run: helm list && kubectl get all && kubectl get ingress
