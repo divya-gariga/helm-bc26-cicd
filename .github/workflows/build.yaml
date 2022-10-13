@@ -5,9 +5,9 @@ on:
       - main
 jobs:
   build:
-    # defaults:
-    #   run:
-    #     working-directory: ./bootcamp-26
+    defaults:
+      run:
+        working-directory: ./bootcamp-26
     runs-on: ubuntu-latest
     steps:
       - name: clone repo
@@ -22,7 +22,7 @@ jobs:
 
 
       - name: maven install
-        working-directory: ./bootcamp-26/backend
+        working-directory: ./backend
         run: mvn clean install -DskipTests
 
       - name: build mysql
@@ -51,7 +51,6 @@ jobs:
       run:
         working-directory: ./bookdiscovery-helm
     runs-on: ubuntu-latest
-
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
