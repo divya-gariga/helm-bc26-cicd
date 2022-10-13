@@ -6,6 +6,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./bootcamp-26
     steps:
       - name: clone repo
         uses: actions/checkout@v2
@@ -43,6 +46,9 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./bootcamp-26
     steps:
       - name: Configure AWS credentials  
         uses: aws-actions/configure-aws-credentials@v1
@@ -53,7 +59,7 @@ jobs:
       - name: connect to eks cluster
         run: aws eks --region ${{ secrets.AWS_DEFAULT_REGION }} update-kubeconfig --name ${{ secrets.CLUSTER_NAME }}
       - name: create release or upgrade
-        run: kubectl config set-context --current --namespace=bc26-app && helm upgrade --install app bookdiscovery-helm/
+        run: kubectl config set-context --current --namespace=bc26-app && helm upgrade --install app .
       - name: verify installation
         run: helm list && kubectl get all && kubectl get ingress
 
