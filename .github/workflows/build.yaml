@@ -15,24 +15,12 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
-      - name: check aws version
-        run:  aws --version
       - name: connect to eks cluster
         run: aws eks --region ${{ secrets.AWS_DEFAULT_REGION }} update-kubeconfig --name ${{ secrets.CLUSTER_NAME }}
-      - name: get all nodes
-        run: kubectl get nodes
-      - name: switch to namespace
-        run: kubectl config set-context --current --namespace=bc26-app
       - name: create release or upgrade
-        run: helm upgrade --install app bookdiscovery-helm/
-      - name: helm list
-        run: helm list
-      - name: get all
-        run: kubectl get all
-      - name: get ingress
-        run: kubectl get ingress
-      
-      
+        run: kubectl config set-context --current --namespace=bc26-app && helm upgrade --install app bookdiscovery-helm/
+      - name: verify installation
+        run: helm list && kubectl get all && kubectl get ingress
       
       
 
