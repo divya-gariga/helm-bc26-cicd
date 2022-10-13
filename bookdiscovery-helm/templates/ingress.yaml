@@ -4,13 +4,15 @@ metadata:
   name: {{ .Release.Name }}-book-discovery-app-ingress
   namespace: {{ $.Values.namespace }}
   annotations: 
-    kubernetes.io/ingress.class: alb 
-    alb.ingress.kubernetes.io/scheme: internet-facing
-    alb.ingress.kubernetes.io/target-type: ip 
-    # nginx.ingress.kubernetes.io/rewrite-target: /
+    # kubernetes.io/ingress.class: alb 
+    # alb.ingress.kubernetes.io/scheme: internet-facing
+    # alb.ingress.kubernetes.io/target-type: ip 
+    nginx.ingress.kubernetes.io/rewrite-target: /
+
 spec:
+  ingressClassName: nginx
   rules:
-    - host: alb.fe.nip.io
+    - host: fe.nip.io
       http:
         paths:
           - path: /
@@ -21,7 +23,7 @@ spec:
                 port:
                   number: 3000
       
-    - host: alb.be.nip.io
+    - host: be.nip.io
       http:
         paths:
           - path: /
