@@ -42,7 +42,7 @@ jobs:
         run: docker push ${{ secrets.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/bootcamp-26-frontend:latest
       - name: clone repo
         uses: actions/checkout@v2
-        
+
   deploy:
     needs: build
     # defaults:
@@ -59,6 +59,7 @@ jobs:
       - name: connect to eks cluster
         run: aws eks --region ${{ secrets.AWS_DEFAULT_REGION }} update-kubeconfig --name ${{ secrets.CLUSTER_NAME }}
       - name: create release or upgrade
-        run: kubectl config set-context --current --namespace=bc26-app && helm upgrade --install app .bookdiscovery-helm/
+        working-directory: ./bookdiscovery-helm
+        run: kubectl config set-context --current --namespace=bc26-app && helm upgrade --install app .
       - name: verify installation
         run: helm list && kubectl get all && kubectl get ingress
