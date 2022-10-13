@@ -23,13 +23,13 @@ spec:
                 port:
                   number: 3000
       
-    - host: be.nip.io
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ .Release.Name }}-bc26-api-service
-                port:
-                  number: 8090
+    # - host: be.nip.io
+    #   http:
+    #     paths:
+    #       - path: /
+    #         pathType: Prefix
+    #         backend:
+    #           service:
+    #             name: {{ .Release.Name }}-bc26-api-service
+    #             port:
+    #               number: 8090
