@@ -9,6 +9,41 @@ jobs:
     steps:
       - name: clone repo
         uses: actions/checkout@v2
+      - name: docker login to github container registry
+        uses: docker/login-action/@v2
+        with:
+         registry: ${{ secrets.REGISTRY }}
+         username: ${{ secrets.REGISTRY_USERNAME }}
+         password: ${{ secrets.REGISTRY_TOKEN }}
+
+      - name: maven install
+        working-directory: ./backend
+        run: mvn clean install -DskipTests
+
+      - name: build mysql
+        working-directory: ./database
+        run: docker build . -t ${{ secrets.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/bootcamp-26-db:latest
+      
+      - name: build backend
+        working-directory: ./backend
+        run: docker build . -t ${{ secrets.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/bootcamp-26-backend:latest
+      
+      - name: build frontend
+        working-directory: ./frontend
+        run: docker build . -t ${{ secrets.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/bootcamp-26-frontend:latest
+
+      - name: docker push mysql
+        run: docker push ${{ secrets.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/bootcamp-26-db:latest
+      - name: docker push backend
+        run: docker push ${{ secrets.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/bootcamp-26-backend:latest
+      - name: docker push frontend
+        run: docker push ${{ secrets.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/bootcamp-26-frontend:latest
+      - name: clone repo
+        uses: actions/checkout@v2
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
       - name: Configure AWS credentials  
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -21,6 +56,9 @@ jobs:
         run: kubectl config set-context --current --namespace=bc26-app && helm upgrade --install app bookdiscovery-helm/
       - name: verify installation
         run: helm list && kubectl get all && kubectl get ingress
+
+
+
       
       
 

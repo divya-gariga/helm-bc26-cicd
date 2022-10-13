@@ -1,0 +1,39 @@
+version: '2'
+services:
+ db:
+  image: mysql:latest 
+  environment:
+   MYSQL_ROOT_PASSWORD: root
+  volumes:
+   - "./database:/docker-entrypoint-initdb.d"
+ backend:
+  depends_on:
+   - db
+  build: ./backend
+  environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/book_discovery
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+  ports:
+   - 8090:8090
+ frontend:
+  depends_on:
+   - backend
+   - db
+  build: ./frontend
+  ports:
+   - 3000:3000
+
+  
+  
+ 
+  
+
+ 
+  
+
+
+   
+
+
+ 
