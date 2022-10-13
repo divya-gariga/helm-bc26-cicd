@@ -6,6 +6,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./bootcamp-26
     steps:
       - name: clone repo
         uses: actions/checkout@v2
@@ -16,8 +19,7 @@ jobs:
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_TOKEN }}
 
-      - name: cd
-        run: cd bootcamp-26/
+
 
       - name: maven install
         working-directory: ./backend
@@ -48,10 +50,8 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./bootcamp-26
+        working-directory: ./bookdiscovery-helm
     steps:
-      - name: cd
-        run: cd bootdiscovery-helm/
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
