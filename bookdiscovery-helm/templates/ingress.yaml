@@ -17,6 +17,8 @@ spec:
                 name: {{ .Release.Name }}-bc26-frontend-service
                 port:
                   number: 3000
+      
+      ingressClassName: nginx
     - host: be.nip.io
       http:
         paths:
@@ -27,3 +29,4 @@ spec:
                 name: {{ .Release.Name }}-bc26-api-service
                 port:
                   number: 8090
+      ingressClassName: nginx
