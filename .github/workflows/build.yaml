@@ -5,9 +5,6 @@ on:
       - main
 jobs:
   build:
-    # defaults:
-    #   run:
-    #     working-directory: ./bootcamp-26
     runs-on: ubuntu-latest
     steps:
       - name: clone repo
@@ -21,34 +18,38 @@ jobs:
       - name: maven install
         working-directory: ./bootcamp-26/backend
         run: mvn clean install -DskipTests
-
-      - name: build mysql
-        working-directory: ./bootcamp-26/database
-        run: docker build . -t ${{ secrets.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/bootcamp-26-db:latest
-
       - name: build backend
         working-directory: ./bootcamp-26/backend
         run: docker build . -t ${{ secrets.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/bootcamp-26-backend:latest
+      - name: docker push backend
+        run: docker push ${{ secrets.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/bootcamp-26-backend:latest
 
+  build_db:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: build mysql
+        working-directory: ./bootcamp-26/database
+        run: docker build . -t ${{ secrets.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/bootcamp-26-db:latest
+      - name: push mysql
+        run: docker push ${{ secrets.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/bootcamp-26-db:latest
+
+  build_frontend:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
       - name: build frontend
         working-directory: ./bootcamp-26/frontend
         run: docker build . -t ${{ secrets.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/bootcamp-26-frontend:latest
-
-      - name: docker push mysql
-        run: docker push ${{ secrets.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/bootcamp-26-db:latest
-      - name: docker push backend
-        run: docker push ${{ secrets.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/bootcamp-26-backend:latest
       - name: docker push frontend
         run: docker push ${{ secrets.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/bootcamp-26-frontend:latest
-      - name: clone repo
-        uses: actions/checkout@v2
 
   deploy:
-    needs: build
-    # defaults:
-    #   run:
-    #     working-directory: ./bookdiscovery-helm
+    needs: [build, build_db, build_frontend]
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: bookdiscovery-helm
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -59,7 +60,6 @@ jobs:
       - name: connect to eks cluster
         run: aws eks --region ${{ secrets.AWS_DEFAULT_REGION }} update-kubeconfig --name ${{ secrets.CLUSTER_NAME }}
       - name: create release or upgrade
-        working-directory: ./bookdiscovery-helm
         run: kubectl config set-context --current --namespace=bc26-app && helm upgrade --install app .
       - name: verify installation
         run: helm list && kubectl get all && kubectl get ingress
